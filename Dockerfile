@@ -34,10 +34,6 @@ RUN set -x \
   && cd /sbin \
   && ln -sf xtables-nft-multi iptables \
   && ln -sf xtables-nft-multi iptables-restore \
-  && ln -sf xtables-nft-multi iptables-save \
-  # some k8s packages expect iptables at /usr/sbin
-  && ln -s /sbin/iptables /usr/sbin/ \
-  && ln -s /sbin/iptables-restore /usr/sbin/ \
-  && ln -s /sbin/iptables-save /usr/sbin/
+  && ln -sf xtables-nft-multi iptables-save
 
 ENTRYPOINT ["/opt/bin/flanneld"]
