@@ -16,7 +16,8 @@ RUN set -x \
   && CGO_ENABLED=1 GOOS=linux \
     go build -v -ldflags '-s -w' -o bin/flanneld
 
-FROM alpine:edge
+# There is bug with iptables-nft-restore on alpine:edge. Use 3.11.
+FROM alpine:3.11
 
 COPY --from=BUILD /go/src/github.com/coreos/flannel/bin/ /opt/bin/
 RUN set -x \
@@ -29,10 +30,14 @@ RUN set -x \
     strongswan \
   \
   && update-ca-certificates \
-  # link iptables to nft
+  # use nftables backend for iptables
   && cd /sbin \
   && ln -sf xtables-nft-multi iptables \
   && ln -sf xtables-nft-multi iptables-restore \
-  && ln -sf xtables-nft-multi iptables-save
+  && ln -sf xtables-nft-multi iptables-save \
+  # some k8s packages expect iptables at /usr/sbin
+  && ln -s /sbin/iptables /usr/sbin/ \
+  && ln -s /sbin/iptables-restore /usr/sbin/ \
+  && ln -s /sbin/iptables-save /usr/sbin/
 
 ENTRYPOINT ["/opt/bin/flanneld"]
