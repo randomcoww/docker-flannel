@@ -28,6 +28,11 @@ RUN set -x \
     iptables \
     strongswan \
   \
-  && update-ca-certificates
+  && update-ca-certificates \
+  # link iptables to nft
+  && cd /sbin \
+  && ln -sf xtables-nft-multi iptables \
+  && ln -sf xtables-nft-multi iptables-restore \
+  && ln -sf xtables-nft-multi iptables-save
 
 ENTRYPOINT ["/opt/bin/flanneld"]
