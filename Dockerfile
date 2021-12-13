@@ -1,5 +1,7 @@
 FROM golang:alpine as BUILD
 
+ARG VERSION
+
 WORKDIR /go/src/github.com/coreos
 
 RUN set -x \
@@ -9,7 +11,7 @@ RUN set -x \
     g++ \
     linux-headers \
   \
-  && git clone \
+  && git clone -b $VERSION \
     https://github.com/coreos/flannel.git \
   && cd flannel \
   && mkdir bin \
